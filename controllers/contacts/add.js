@@ -1,7 +1,8 @@
 const contacts = require("../../services/contacts");
 
 const add = async (req, res, next) => {
-  const result = await contacts.addContact(req.body);
+  const { body, userId } = req;
+  const result = await contacts.addContact(body, userId);
   res.status(201).json(result);
 };
 

@@ -1,4 +1,4 @@
-const { HttpError } = require("../../helpers/contacts");
+const { HttpError } = require("../helpers");
 
 const validateBody = (schema, errorMessage) => {
   const func = (req, res, next) => {
