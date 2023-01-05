@@ -10,6 +10,10 @@ const authMiddleware = async (req, res, next) => {
     next(HttpError(401, "Not authorized"));
   }
 
+  if (tokenType !== "Bearer") {
+    next(HttpError(401, "Not authorized"));
+  }
+
   try {
     const hashedUser = jwt.decode(token, process.env.JWT_SECRET);
     const user = await User.findById(hashedUser._id);
