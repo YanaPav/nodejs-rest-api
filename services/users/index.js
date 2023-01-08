@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { HttpError } = require("../../helpers");
 const gravatar = require("gravatar");
+const fs = require("fs/promises");
+const patch = require("path");
 
 const register = async (email, password) => {
   const user = await User.findOne({ email });
@@ -68,9 +70,24 @@ const current = async (userId) => {
   return user;
 };
 
+const avatarUpdate = async (userId, file) => {
+  const avatarsDir = patch.join(__dirname, "../../", "public", "avatars");
+  const { path: tempDir, originalname } = file;
+  const imgName = `${userId}_${originalname}`;
+  const resultDir = patch.join(avatarsDir, imgName);
+
+  await fs.rename(tempDir, resultDir);
+
+  const avatarUrl = patch.join("avatars", imgName);
+  await User.findByIdAndUpdate(userId, { avatarUrl });
+
+  return avatarUrl;
+};
+
 module.exports = {
   register,
   login,
   logout,
   current,
+  avatarUpdate,
 };
