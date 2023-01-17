@@ -5,8 +5,12 @@ const { HttpError } = require("../../helpers");
 const gravatar = require("gravatar");
 const fs = require("fs/promises");
 const patch = require("path");
+const sgMail = require("@sendgrid/mail");
 
 const register = async (email, password) => {
+  const { SENDGRID_API_KEY } = process.env;
+  sgMail.setApiKey(SENDGRID_API_KEY);
+
   const user = await User.findOne({ email });
 
   if (user) {
@@ -19,6 +23,22 @@ const register = async (email, password) => {
     avatarURL: gravatar.url(email),
   });
   await newUser.save();
+
+  const msg = {
+    to: email, // Change to your recipient
+    from: "yanapavlik@ukr.net", // Change to your verified sender
+    subject: "Sending with SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log("Email sent");
+  } catch (error) {
+    console.log("Спіймали помилку");
+    console.error(error);
+  }
 };
 
 const login = async (email, password) => {
