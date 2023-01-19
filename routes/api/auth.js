@@ -7,6 +7,8 @@ const {
   logout,
   current,
   avatarUpdate,
+  verify,
+  resendVerify,
 } = require("../../controllers/auth");
 const {
   validateBody,
@@ -14,9 +16,11 @@ const {
   upload,
   prepareAvatar,
 } = require("../../middlewares");
-const authSchema = require("../../schemas/auth/authSchema");
+const { authSchema, verifySchema } = require("../../schemas/auth");
 
 router.post("/register", validateBody(authSchema), ctrlWrapper(register));
+router.get("/verify/:verificationToken", ctrlWrapper(verify));
+router.post("/verify", validateBody(verifySchema), ctrlWrapper(resendVerify));
 router.get("/login", validateBody(authSchema), ctrlWrapper(login));
 router.post("/logout", authMiddleware, ctrlWrapper(logout));
 router.get("/current", authMiddleware, ctrlWrapper(current));
